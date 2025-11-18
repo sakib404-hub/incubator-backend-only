@@ -41,6 +41,20 @@ const run = async () => {
       res.send(result);
     });
 
+    // updating information
+    app.put("/services/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const updatedInformation = req.body;
+      const update = {
+        $set: updatedInformation,
+      };
+      const result = await serviceCollection.updateOne(query, update);
+      res.send(result);
+    });
+
     // getting personal information through email
     app.get("/personalServices", async (req, res) => {
       //getting the email form the query
@@ -79,6 +93,15 @@ const run = async () => {
   } catch (error) {
     console.log(error.message);
   }
+
+  app.delete("/services/:id", async (req, res) => {
+    const id = req.params.id;
+    const query = {
+      _id: new ObjectId(id),
+    };
+    const result = await serviceCollection.deleteOne(query);
+    res.send(result);
+  });
 };
 run().catch(console.dir);
 
