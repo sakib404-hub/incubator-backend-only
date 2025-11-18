@@ -3,7 +3,8 @@ const cors = require("cors");
 require("dotenv").config();
 const port = 3000;
 const app = express();
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const { useEffect } = require("react");
 
 // middleware
 app.use(express.json());
@@ -19,6 +20,12 @@ const client = new MongoClient(uri, {
   },
 });
 
+// useEffect(() => {
+//   axios("urlInformation")
+//     .then((res) => console.log(res.data))
+//     .catch((error) => console.log(error));
+// }, []);
+
 const run = async () => {
   try {
     await client.connect();
@@ -32,6 +39,15 @@ const run = async () => {
       const query = {};
       const cursor = serviceCollection.find(query);
       const result = await cursor.toArray();
+      res.send(result);
+    });
+    // getting specifi information
+    app.get("/service/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = {
+        _id: new ObjectId(id),
+      };
+      const result = await serviceCollection.findOne(query);
       res.send(result);
     });
     //posting the service information
