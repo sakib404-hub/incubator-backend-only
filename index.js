@@ -4,7 +4,6 @@ require("dotenv").config();
 const port = 3000;
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const { useEffect } = require("react");
 
 // middleware
 app.use(express.json());
@@ -41,15 +40,34 @@ const run = async () => {
       const result = await cursor.toArray();
       res.send(result);
     });
+
+    // getting personal information through email
+    app.get("/personalServices", async (req, res) => {
+      //getting the email form the query
+      const email = req.query.email;
+      console.log(email);
+      const query = {};
+      //checking if the email exist
+      if (email) {
+        query.contact_email = email;
+      }
+      //finding information and posting it to the server
+      const cursor = serviceCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     // getting specifi information
-    app.get("/service/:id", async (req, res) => {
+    app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
+      console.log(id);
       const query = {
         _id: new ObjectId(id),
       };
       const result = await serviceCollection.findOne(query);
       res.send(result);
     });
+
     //posting the service information
     app.post("/services", async (req, res) => {
       const newService = req.body;
